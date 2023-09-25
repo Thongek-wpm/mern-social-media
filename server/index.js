@@ -8,6 +8,10 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+import authRoutes from "./routers/auth.js";
+import userRoutes from "./routers/user.js";
+import { register } from "./controllers/auth.js";
+import { verifyToken } from "./middlewares/auth.js";
 
 /*CONFIGURATIONS*/
 const __filename = fileURLToPath(import.meta.url);
@@ -35,7 +39,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /*ROUTES WITH FIELS */
-app.post("/auth/register", upload.single("picture"), register);
+app.post("/auth/register", upload.single("picture"), verifyToken, register);
+
+/*ROUTES*/
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 /* MONGOOSE SETING */
 const PORT = process.env.PORT || 3000;
